@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | STREAM AFRICA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+
+        :root {
+            --stream-green: #b8d5b0;
+            --stream-dark: #0a1f1c;
+            --stream-bg: #0a1f1c; 
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--stream-bg);
+            font-family: 'Inter', sans-serif;
+            color: #ffffff;
+            min-height: 100vh;
+            padding-bottom: 40px;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        .dashboard-header {
+            padding: 25px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            background: var(--stream-dark);
+            border-bottom: 2px solid var(--stream-green);
+        }
+
+        .welcome-text h1 {
+            font-size: 28px;
+            font-weight: 900;
+            margin: 0;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+        }
+
+        /* CARD STYLES */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--stream-green);
+            border-radius: 24px;
+            padding: 20px;
+            margin: 20px 15px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .glass-card-bright {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(184, 213, 176, 0.2);
+            border-radius: 24px;
+            padding: 20px;
+            margin: 0 15px 20px 15px;
+        }
+
+        .status-badge {
+            background: rgba(231, 76, 60, 0.2);
+            color: #ff6b6b;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            border: 1px solid rgba(231, 76, 60, 0.4);
+        }
+
+        .action-link-btn {
+            background: var(--stream-green);
+            color: var(--stream-dark);
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 15px;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+        }
+        .action-link-btn:active { transform: scale(0.97); }
+
+        /* FEATURE ITEMS */
+        .feature-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border: 1px solid rgba(184, 213, 176, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .feature-icon-box {
+            width: 45px;
+            height: 45px;
+            background: rgba(184, 213, 176, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--stream-green);
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        /* Sidebar Menu */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100%;
+            background: var(--stream-dark);
+            z-index: 5000;
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 30px 20px;
+            border-right: 2px solid var(--stream-green);
+        }
+
+        .side-menu.open { left: 0; }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            margin-bottom: 5px;
+        }
+
+        .menu-item i { width: 20px; color: var(--stream-green); }
+
+        .logo-img {
+            height: 50px;
+            filter: brightness(0) invert(1);
+        }
+
+        /* Floating Menu Button */
+        .menu-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            width: 65px;
+            height: 65px;
+            background: var(--stream-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            z-index: 4000;
+            cursor: pointer;
+            color: var(--stream-dark);
+        }
+
+        /* NOTIFICATION POPUP (TOP LEFT) */
+        .notif-popup {
+            position: fixed;
+            top: 20px;
+            left: -350px;
+            background: var(--stream-dark);
+            border: 2px solid var(--stream-green);
+            padding: 12px 15px;
+            border-radius: 15px;
+            width: 320px;
+            z-index: 6000;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            transition: left 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .notif-popup.active { left: 20px; }
+        .notif-icon { font-size: 18px; color: var(--stream-green); }
+        .notif-body { font-size: 12px; color: #ffffff; line-height: 1.4; }
+        .notif-user { color: var(--stream-green); font-weight: 800; }
+        .notif-amount { color: #ffffff; font-weight: 900; }
+        .notif-amount.withdrawal { color: #ff6b6b; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 7000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(12px);
+        }
+
+        .modal-card {
+            background: #0d1211;
+            border-radius: 30px;
+            width: 95%;
+            max-width: 380px;
+            padding: 40px 25px;
+            position: relative;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Country Select Styling */
+        .country-select {
+            width: 100%;
+            background: #1a1f1e;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 16px;
+            border-radius: 16px;
+            margin-top: 10px;
+            font-weight: 600;
+            outline: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 15px;
+        }
+        .country-select option {
+            background: #1a1f1e;
+            color: white;
+        }
+
+        /* Proceed Button Specific (Red Style from Image) */
+        .btn-proceed {
+            background: #ff4b4b; /* Bright red/coral from image */
+            color: white;
+            width: 100%;
+            padding: 18px;
+            border-radius: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            margin-top: 25px;
+            cursor: pointer;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Side Menu -->
+<div id="side-menu" class="side-menu">
+    <div style="margin-bottom: 40px;">
+        <img src="logo.png" alt="Logo" class="logo-img">
+    </div>
+    <div class="menu-item"><i class="fas fa-home"></i> HOME</div>
+    <div class="menu-item"><i class="fas fa-wallet"></i> REWARD</div>
+    <div class="menu-item"><i class="fas fa-tower-broadcast"></i> LIVESTREAM</div>
+    <div class="menu-item"><i class="fas fa-clapperboard"></i> VIDEO ADS</div>
+    <div class="menu-item"><i class="fas fa-users"></i> NETWORK</div>
+    <div class="menu-item"><i class="fas fa-gear"></i> SETTINGS</div>
+    
+    <button onclick="toggleMenu()" style="margin-top: 40px; background: rgba(255,255,255,0.1); color: #fff; width: 100%; padding: 15px; border-radius: 12px; font-weight: 800; text-transform: uppercase;">
+        CLOSE MENU
+    </button>
+</div>
+
+<!-- Live Notifications -->
+<div id="notif-popup" class="notif-popup">
+    <div class="notif-icon" id="notif-icon"><i class="fas fa-circle-check"></i></div>
+    <div class="notif-body" id="notif-text">
+        Connecting to Stream...
+    </div>
+</div>
+
+<div class="dashboard-header">
+    <div class="welcome-text">
+        <h1>Dashboard</h1>
+        <p style="color:rgba(255,255,255,0.6); font-size: 14px; margin-top: 5px;">Welcome to your <br> <span style="color:var(--stream-green); font-weight: 800;">STREAM AFRICA</span> account</p>
+    </div>
+    <div style="background: rgba(184, 213, 176, 0.1); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; border: 1px solid rgba(184, 213, 176, 0.2);">
+        <i class="fas fa-bell" style="color:var(--stream-green)"></i>
+        <div style="position: absolute; top: -2px; right: -2px; background: #e74c3c; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white;">1</div>
+    </div>
+</div>
+
+<!-- Account Status -->
+<div class="glass-card">
+    <div class="flex justify-between items-start mb-6">
+        <div class="flex items-center gap-3">
+            <i class="fas fa-shield-halved text-3xl" style="color:var(--stream-green)"></i>
+            <h2 style="font-size: 20px; font-weight: 800; color: #ffffff">Account<br>Status</h2>
+        </div>
+        <div class="status-badge">Inactive</div>
+    </div>
+    <p style="color:rgba(255,255,255,0.7); font-size: 14px; line-height: 1.5; margin-bottom: 20px;">
+        Your Stream account is currently inactive. Complete your onboarding to unlock your earnings and dashboard features.
+    </p>
+    <div class="action-link-btn" onclick="openModal()">
+        Activate account now <i class="fas fa-bolt-lightning"></i>
+    </div>
+</div>
+
+<!-- Onboarding Details -->
+<div class="glass-card">
+    <div class="flex items-center gap-3 mb-6">
+        <i class="fas fa-file-invoice-dollar text-xl" style="color:var(--stream-green)"></i>
+        <h2 style="font-size: 20px; font-weight: 800; color: #ffffff">Onboarding Details</h2>
+    </div>
+    
+    <div class="space-y-4">
+        <div class="flex justify-between border-b border-white/10 pb-3">
+            <span style="color:rgba(255,255,255,0.5)">Plan:</span>
+            <span style="color:#ff6b6b; font-weight: 800;">None</span>
+        </div>
+        <div class="flex justify-between border-b border-white/10 pb-3">
+            <span style="color:rgba(255,255,255,0.5)">Price:</span>
+            <span style="color:#ff6b6b; font-weight: 800;">Pending</span>
+        </div>
+        <div class="flex justify-between border-b border-white/10 pb-3">
+            <span style="color:rgba(255,255,255,0.5)">Status:</span>
+            <span style="color:#ff6b6b; font-weight: 800;">Inactive</span>
+        </div>
+        <div class="flex justify-between pb-1">
+            <span style="color:rgba(255,255,255,0.5)">Joined:</span>
+            <span style="color:var(--stream-green); font-weight: 600;" id="dash-reg-date">...</span>
+        </div>
+    </div>
+
+    <div class="action-link-btn" style="background: #e74c3c; color: white; margin-top: 30px;" onclick="openModal()">
+        Claim instant ₦12,000 reward <i class="fas fa-gift"></i>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div style="margin: 30px 20px 15px; font-size: 18px; font-weight: 900; display: flex; align-items: center; gap: 10px; text-transform: uppercase; color: #ffffff;">
+    <i class="fas fa-grip-vertical" style="color:var(--stream-green)"></i> Stream Features
+</div>
+
+<div class="grid grid-cols-1 px-4 gap-4">
+    <div class="feature-item" onclick="openModal()">
+        <div class="feature-icon-box"><i class="fas fa-wallet"></i></div>
+        <h3 style="color:rgba(255,255,255,0.4); font-weight: 700; font-size: 13px; text-transform: uppercase;">Stream Balance</h3>
+        <div style="font-size: 24px; font-weight: 900; color:rgba(255,255,255,0.2);">₦0.00</div>
+        <div style="font-size: 11px; color: rgba(255,255,255,0.3);">Real-time earnings tracker</div>
+    </div>
+
+    <div class="feature-item" onclick="openModal()">
+        <div class="feature-icon-box"><i class="fas fa-tower-broadcast"></i></div>
+        <h3 style="color:rgba(255,255,255,0.4); font-weight: 700; font-size: 13px; text-transform: uppercase;">Livestream</h3>
+        <div style="font-size: 24px; font-weight: 900; color:rgba(255,255,255,0.2);">Inactive</div>
+        <div style="font-size: 11px; color: rgba(255,255,255,0.3);">Earn while streaming content</div>
+    </div>
+
+    <div class="feature-item" onclick="openModal()">
+        <div class="feature-icon-box"><i class="fas fa-clapperboard"></i></div>
+        <h3 style="color:rgba(255,255,255,0.4); font-weight: 700; font-size: 13px; text-transform: uppercase;">Video Ads</h3>
+        <div style="font-size: 24px; font-weight: 900; color:rgba(255,255,255,0.2);">0 Views</div>
+        <div style="font-size: 11px; color: rgba(255,255,255,0.3);">Monetize your watch time</div>
+    </div>
+
+    <div class="feature-item" onclick="openModal()">
+        <div class="feature-icon-box"><i class="fas fa-network-wired"></i></div>
+        <h3 style="color:rgba(255,255,255,0.4); font-weight: 700; font-size: 13px; text-transform: uppercase;">My Network</h3>
+        <div style="font-size: 24px; font-weight: 900; color:rgba(255,255,255,0.2);">0 Members</div>
+        <div style="font-size: 11px; color: rgba(255,255,255,0.3);">Growth statistics</div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="glass-card-bright mt-10">
+    <div style="font-size: 18px; font-weight: 800; margin-bottom: 25px; color: #ffffff;">Account History</div>
+    <div class="space-y-6">
+        <div class="flex gap-4 items-center">
+            <div style="width:40px; height:40px; background:rgba(255,255,255,0.05); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--stream-green)"><i class="fas fa-user-plus"></i></div>
+            <div>
+                <div style="font-weight:700; font-size:15px; color:#ffffff;">Profile Created</div>
+                <div style="color:rgba(255,255,255,0.5); font-size:12px;">Welcome to Stream Africa</div>
+            </div>
+            <div style="margin-left:auto; color:rgba(255,255,255,0.3); font-size:11px;">Just now</div>
+        </div>
+        <div class="flex gap-4 items-center">
+            <div style="width:40px; height:40px; background:rgba(255,255,255,0.05); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--stream-green)"><i class="fas fa-clock"></i></div>
+            <div>
+                <div style="font-weight:700; font-size:15px; color:#ffffff;">Verification Pending</div>
+                <div style="color:rgba(255,255,255,0.5); font-size:12px;">Onboarding not completed</div>
+            </div>
+            <div style="margin-left:auto; color:rgba(255,255,255,0.3); font-size:11px;">Just now</div>
+        </div>
+    </div>
+</div>
+
+<!-- Activation Modal (Updated to match image) -->
+<div id="activation-modal" class="modal-overlay">
+    <div class="modal-card">
+        <!-- Close Button -->
+        <div onclick="closeModal()" style="position: absolute; top: 20px; right: 20px; color: rgba(255,255,255,0.5); font-size: 24px; cursor: pointer;">
+            <i class="fas fa-times"></i>
+        </div>
+        
+        <!-- Warning Icon (Yellow) -->
+        <div style="color:#ffcc00; font-size: 70px; margin-bottom: 25px;">
+            <i class="fas fa-triangle-exclamation"></i>
+        </div>
+
+        <!-- Title -->
+        <h2 style="font-size: 26px; font-weight: 900; margin-bottom: 15px; color:#ffffff; line-height: 1.2;">
+            Complete Account<br>Activation
+        </h2>
+
+        <!-- Description -->
+        <p style="color:rgba(255,255,255,0.6); font-size: 16px; line-height: 1.5; margin-bottom: 30px; padding: 0 10px;">
+            You're almost there! Complete your account activation by making the payment for your selected plan.
+        </p>
+
+        <!-- Form Label -->
+        <div style="text-align: left; font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; padding-left: 5px;">
+            Confirm your country
+        </div>
+
+        <!-- Country Select -->
+        <select id="country-select" class="country-select">
+            <option value="nigeria">Nigeria 🇳🇬</option>
+            <option value="cameroon">Cameroon 🇨🇲</option>
+            <option value="ghana">Ghana 🇬🇭</option>
+            <option value="kenya">Kenya 🇰🇪</option>
+            <option value="south_africa">South Africa 🇿🇦</option>
+            <option value="uganda">Uganda 🇺🇬</option>
+        </select>
+
+        <!-- Proceed Button -->
+        <div class="btn-proceed" onclick="goToRegistration()">
+            Proceed to payment <i class="fas fa-credit-card"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Menu Toggle Button -->
+<div class="menu-toggle" onclick="toggleMenu()">
+    <i class="fas fa-bars"></i>
+</div>
+
+<script>
+    const ACTIVITIES = [
+        { type: 'joined', name: "Ayo M.", loc: "Lagos", amount: "12,000", time: "Just now", icon: "fa-user-plus" },
+        { type: 'withdrawn', name: "Olamide B.", loc: "Ibadan", amount: "42,000", time: "2m ago", icon: "fa-money-bill-transfer" },
+        { type: 'joined', name: "Kwame O.", loc: "Accra", amount: "12,000", time: "5m ago", icon: "fa-user-check" },
+        { type: 'withdrawn', name: "Banda L.", loc: "Nairobi", amount: "15,000", time: "8m ago", icon: "fa-wallet" }
+    ];
+
+    let currentActIndex = 0;
+
+    function cycleActivities() {
+        const popup = document.getElementById('notif-popup');
+        const iconDiv = document.getElementById('notif-icon');
+        const textDiv = document.getElementById('notif-text');
+        const act = ACTIVITIES[currentActIndex];
+
+        if(!popup) return;
+
+        iconDiv.innerHTML = `<i class="fas ${act.icon}"></i>`;
+        let message = act.type === 'joined' 
+            ? `<span class="notif-user">${act.name}</span> (${act.loc}) joined <span style="font-weight:800; color:var(--stream-green)">STREAM</span> and earned <span class="notif-amount">₦${act.amount}</span>`
+            : `<span class="notif-user">${act.name}</span> (${act.loc}) withdrew <span class="notif-amount withdrawal">₦${act.amount}</span> from <span style="font-weight:800; color:var(--stream-green)">STREAM</span>`;
+
+        textDiv.innerHTML = `${message}<div style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:2px;">${act.time}</div>`;
+        popup.classList.add('active');
+        
+        setTimeout(() => {
+            popup.classList.remove('active');
+            currentActIndex = (currentActIndex + 1) % ACTIVITIES.length;
+            setTimeout(cycleActivities, 4000);
+        }, 6000);
+    }
+
+    function toggleMenu() {
+        document.getElementById('side-menu').classList.toggle('open');
+    }
+
+    function openModal() {
+        document.getElementById('activation-modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('activation-modal').style.display = 'none';
+    }
+
+    function goToRegistration() {
+        const country = document.getElementById('country-select').value;
+        localStorage.setItem('selected_country', country);
+        // FIXED: Redirects to payment.html
+        window.location.href = 'payment.html'; 
+    }
+
+    function initUserTracking() {
+        const regDateDisplay = document.getElementById('dash-reg-date');
+        let savedDate = localStorage.getItem('stream_reg_date');
+        if (!savedDate) {
+            const now = new Date();
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            savedDate = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+            localStorage.setItem('stream_reg_date', savedDate);
+        }
+        if(regDateDisplay) regDateDisplay.innerText = savedDate;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initUserTracking();
+        setTimeout(cycleActivities, 2000);
+    });
+</script>
+</body>
+</html>
